@@ -1,11 +1,10 @@
-// import Button from '@mui/material/Button';
-import { Navigate } from 'react-router-dom';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+// import Button from '@mui/material/Button';
 // import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -16,7 +15,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
-import { BACKEND_URL, accountContext } from 'src/utils/constants';
+import { BACKEND_URL } from 'src/utils/constants';
 
 import { bgGradient } from 'src/theme/css';
 
@@ -27,12 +26,10 @@ import Iconify from 'src/components/iconify';
 export default function LoginView() {
   const theme = useTheme();
 
-  const router = useRouter();
-
-  const account = useContext(accountContext);
-
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+
+  const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -59,17 +56,7 @@ export default function LoginView() {
         if (Number(response.status) === 200) {
           const result = await response.json();
           if (result.role.toLowerCase() === 'admin' || result.role.toLowerCase() === 'superadmin') {
-            account.updateAccount({
-              email: result.email,
-              name: result.name,
-              token: result.token,
-              role: result.role,
-            });
-            console.log('logged in');
             localStorage.setItem('token', result.token);
-            localStorage.setItem('name', result.name);
-            localStorage.setItem('email', result.email);
-            localStorage.setItem('role', result.role);
             router.replace('/');
           } else {
             alert('غير مصرح لك بالدخول هنا');
@@ -126,9 +113,7 @@ export default function LoginView() {
     </>
   );
 
-  return account?.role ? (
-    <Navigate to="/" replace />
-  ) : (
+  return (
     <Box
       sx={{
         ...bgGradient({

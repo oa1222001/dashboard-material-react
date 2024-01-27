@@ -1,5 +1,8 @@
+// import { lazy, Suspense, useContext } from 'react';
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
+
+// import { accountContext } from 'src/utils/constants';
 
 import DashboardLayout from 'src/layouts/dashboard';
 
@@ -13,6 +16,8 @@ export const Page404 = lazy(() => import('src/pages/page-not-found'));
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  // const account = useContext(accountContext);
+
   const routes = useRoutes([
     {
       element: (
