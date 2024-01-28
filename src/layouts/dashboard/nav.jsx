@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useEffect, useContext } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -14,7 +14,9 @@ import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { account } from 'src/_mock/account';
+// import { account } from 'src/_mock/account';
+
+import { accountContext } from 'src/utils/constants';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
@@ -25,6 +27,7 @@ import navConfig from './config-navigation';
 // ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
+  const account = useContext(accountContext);
   const pathname = usePathname();
 
   const upLg = useResponsive('up', 'lg');
@@ -52,7 +55,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Avatar src="/assets/images/avatars/admin.jpg" alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
+        <Typography variant="subtitle2">{account.name}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
