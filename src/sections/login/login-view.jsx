@@ -65,7 +65,6 @@ export default function LoginView() {
               token: result.token,
               role: result.role,
             });
-            console.log('logged in');
             localStorage.setItem('token', result.token);
             localStorage.setItem('name', result.name);
             localStorage.setItem('email', result.email);
