@@ -112,8 +112,8 @@ export default function AppView() {
             // console.log(resultCities);
             // console.log(resultAboutProducts);
             // console.log(resultPromocodes);
-            console.log(resultSlider);
-            // console.log(resultFaq);
+            // console.log(resultSlider);
+            console.log(resultFaq);
 
             setIsLoading(false);
 
@@ -171,7 +171,7 @@ export default function AppView() {
     form.append('image', formData.logoFile);
 
     try {
-      console.log(account.token);
+      // console.log(account.token);
       const response = await fetch(`${BACKEND_URL}/admin/editlogo`, {
         method: 'POST',
         body: form,
@@ -379,99 +379,145 @@ export default function AppView() {
     }
   };
 
-  const handleDeleteSlide = (id) => {
-    setFormData({
-      ...formData,
-      slider: formData.slider.filter((slide) => slide.id !== id),
-    });
+  const handleDeleteSlide = async (index) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/admin/deletesliderimage`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${account.token}`,
+        },
+        body: JSON.stringify({
+          id: index,
+        }),
+      });
+      if (Number(response.status) === 200) {
+        router.reload();
+      } else {
+        alert('مشكلة في سيرفر الموقع');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('مشكلة في سيرفر الموقع');
+    }
   };
 
   const handleSliderImageAdd = (e) => {
     setFormData((prev) => ({ ...prev, newSlideImage: e.target.files[0] }));
   };
 
-  const handleAddSlide = () => {
-    const newSlide = {
-      id: formData.slider.length + 1,
-      image: '',
-      title: '',
-      description: '',
-    };
+  const handleAddSlide = async () => {
+    const form = new FormData();
+    form.append('image', formData.newSlideImage);
+    form.append('title', formData.newSlideTitle);
+    form.append('description', formData.newSlideDescription);
 
-    setFormData({
-      ...formData,
-      slider: [...formData.slider, newSlide],
-    });
-  };
-
-  const handleAboutProductsSubmit = async () => {
     try {
-      const response = await fetch('YOUR_BACKEND_ABOUT_PRODUCTS_URL', {
+      // console.log(account.token);
+      const response = await fetch(`${BACKEND_URL}/admin/addsliderimage`, {
         method: 'POST',
+        body: form,
         headers: {
-          'Content-Type': 'application/json',
+          authorization: `Bearer ${account.token}`, // Include the authorization header
         },
-        body: JSON.stringify({
-          image: formData.aboutProducts.image,
-          message: formData.aboutProducts.message,
-        }),
       });
 
       if (response.ok) {
-        console.log('About Products data submitted successfully!');
+        router.reload();
+        console.log('Slider uploaded successfully!');
         // You may update the state or perform additional actions upon success
       } else {
-        console.error('About Products data submission failed.');
+        console.error('Slider upload failed.');
+        console.log(response);
       }
     } catch (error) {
-      console.error('Error submitting About Products data:', error.message);
+      console.error('Error uploading Slider:', error.message);
     }
   };
 
-  const handleEditFAQ = (index, field, value) => {
-    const updatedFAQ = [...formData.faq];
-    updatedFAQ[index][field] = value;
-    setFormData({ ...formData, faq: updatedFAQ });
-  };
+  const handleAboutProductsSubmit = async () => {
+    const form = new FormData();
+    form.append('image', formData.aboutProducts.newAboutImage);
+    form.append('message', formData.aboutProducts.message);
 
-  const handleDeleteFAQ = (id) => {
-    setFormData({
-      ...formData,
-      faq: formData.faq.filter((item) => item.id !== id),
-    });
-  };
-
-  const handleAddFAQ = () => {
-    const newFAQ = {
-      id: formData.faq.length + 1,
-      question: '',
-      answer: '',
-    };
-
-    setFormData({
-      ...formData,
-      faq: [...formData.faq, newFAQ],
-    });
-  };
-
-  const handleFAQSubmit = async () => {
     try {
-      const response = await fetch('YOUR_BACKEND_FAQ_URL', {
+      // console.log(account.token);
+      const response = await fetch(`${BACKEND_URL}/admin/editaboutproducts`, {
         method: 'POST',
+        body: form,
         headers: {
-          'Content-Type': 'application/json',
+          authorization: `Bearer ${account.token}`, // Include the authorization header
         },
-        body: JSON.stringify(formData.faq),
       });
 
       if (response.ok) {
-        console.log('FAQ data submitted successfully!');
+        router.reload();
+        console.log('Slider uploaded successfully!');
         // You may update the state or perform additional actions upon success
       } else {
-        console.error('FAQ data submission failed.');
+        console.error('Slider upload failed.');
+        console.log(response);
       }
     } catch (error) {
-      console.error('Error submitting FAQ data:', error.message);
+      console.error('Error uploading Slider:', error.message);
+    }
+  };
+
+  const handleDeleteFAQ = async (index) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/admin/deletefaq`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${account.token}`,
+        },
+        body: JSON.stringify({
+          id: index,
+        }),
+      });
+      if (Number(response.status) === 200) {
+        router.reload();
+      } else {
+        alert('مشكلة في سيرفر الموقع');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('مشكلة في سيرفر الموقع');
+    }
+  };
+
+  const handleAddFAQ = () => {
+    setFormData((prev) => ({
+      ...prev,
+      isAddingFaq: true,
+    }));
+  };
+
+  const handleSubmitFaq = async () => {
+    if (formData.newFaqQuestion && formData.newFaqAnswer) {
+      try {
+        const response = await fetch(`${BACKEND_URL}/admin/addfaq`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${account.token}`,
+          },
+          body: JSON.stringify({
+            question: formData.newFaqQuestion,
+            answer: formData.newFaqAnswer,
+          }),
+        });
+        if (Number(response.status) === 200) {
+          router.reload();
+        } else {
+          alert('مشكلة في سيرفر الموقع');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('مشكلة في سيرفر الموقع');
+      }
+    } else {
+      alert('يرجى إدخال بيانات في السؤال والجواب');
     }
   };
 
@@ -544,12 +590,13 @@ export default function AppView() {
         {/* Cities Section */}
         <Grid item xs={12}>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            المدن المدعوم التوصيل لها
+            المدن المدعوم التوصيل لها و اسعارها
           </Typography>
           <List>
             {formData.cities.map((city, index) => (
               <ListItem key={city.id}>
-                <ListItemText primary={`${city.name}  -  السعر: ${city.price}`} />
+                <ListItemText primary={`${city.name}  `} />
+                <ListItemText primary={` ${city.price}  `} />
                 <Button
                   variant="contained"
                   color="secondary"
@@ -739,63 +786,73 @@ export default function AppView() {
       {/* about products section  */}
       <Grid item xs={12} mt={4}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          About Our Products
+          عن منتجاتنا
         </Typography>
         <img src={formData.aboutProducts.image} alt="About Products" style={{ maxWidth: '100%' }} />
         <input
           type="file"
           accept="image/*"
           onChange={(e) =>
-            setFormData({
-              ...formData,
-              aboutProducts: { ...formData.aboutProducts, image: e.target.files[0] },
-            })
+            setFormData((prev) => ({
+              ...prev,
+              aboutProducts: { ...formData.aboutProducts, newAboutImage: e.target.files[0] },
+            }))
           }
         />
         <TextField
-          label="Message"
+          label="الرسالة"
           value={formData.aboutProducts.message}
           onChange={(e) =>
-            setFormData({
-              ...formData,
+            setFormData((prev) => ({
+              ...prev,
               aboutProducts: { ...formData.aboutProducts, message: e.target.value },
-            })
+            }))
           }
         />
         <Button variant="contained" color="primary" onClick={handleAboutProductsSubmit}>
-          Submit About Products
+          احفظ
         </Button>
       </Grid>
 
       {/* faq section */}
       <Grid item xs={12} mt={4}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          FAQs
+          الأسئلة الشائعة
         </Typography>
         {formData.faq.map((item, index) => (
           <div key={index}>
-            <TextField
-              label={`Question ${index + 1}`}
-              value={item.question}
-              onChange={(e) => handleEditFAQ(index, 'question', e.target.value)}
-            />
-            <TextField
-              label={`Answer ${index + 1}`}
-              value={item.answer}
-              onChange={(e) => handleEditFAQ(index, 'answer', e.target.value)}
-            />
+            <Typography variant="body1">
+              <strong>السؤال:</strong> {item.question}
+            </Typography>
+            <Typography variant="body1">
+              <strong>الجواب:</strong> {item.answer}
+            </Typography>
             <Button variant="contained" color="secondary" onClick={() => handleDeleteFAQ(item.id)}>
-              Delete FAQ
+              احذف
             </Button>
             <Divider sx={{ my: 2 }} />
           </div>
         ))}
         <Button variant="contained" color="primary" onClick={handleAddFAQ}>
-          Add FAQ
+          إضافة سؤال جديد
         </Button>
-        <Button variant="contained" color="primary" onClick={handleFAQSubmit}>
-          Submit FAQs
-        </Button>
+        {formData.isAddingFaq && (
+          <div>
+            <TextField
+              label="السؤال"
+              value={formData.newFaqQuestion}
+              onChange={(e) => setFormData((prev) => ({ ...prev, newFaqQuestion: e.target.value }))}
+            />
+            <TextField
+              label="جواب"
+              value={formData.newFaqAnswer}
+              onChange={(e) => setFormData((prev) => ({ ...prev, newFaqAnswer: e.target.value }))}
+            />
+            <Button variant="contained" color="primary" onClick={handleSubmitFaq}>
+              احفظ
+            </Button>
+          </div>
+        )}
       </Grid>
     </Container>
   );
