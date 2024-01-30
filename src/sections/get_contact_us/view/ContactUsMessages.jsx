@@ -20,9 +20,9 @@ import UserTableHead from '../user-table-head';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
-  const [clients, setClients] = useState([
-    { id: '1', name: 'name', email: 'email', number: 'number' },
+export default function ContactUsMessagesPage() {
+  const [Messages, setMessages] = useState([
+    { _id: '1', name: 'name', email: 'email', number: 'number', message: 'message' },
   ]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,20 +33,20 @@ export default function UserPage() {
     const loadData = async () => {
       if (account.token !== '') {
         try {
-          const responseClients = await fetch(`${BACKEND_URL}/admin/getclients`, {
+          const responseMessages = await fetch(`${BACKEND_URL}/admin/getcontactus`, {
             headers: {
               authorization: `Bearer ${account.token}`,
             },
           });
 
-          if (Number(responseClients.status) === 200) {
-            const resultClients = await responseClients.json();
-            console.log(resultClients.clients);
+          if (Number(responseMessages.status) === 200) {
+            const resultMessages = await responseMessages.json();
+            console.log(resultMessages.messages);
 
-            setClients((prev) => [...resultClients.clients]);
+            setMessages((prev) => [...resultMessages.messages]);
             setIsLoading(false);
           } else {
-            // alert('مشكلة في سيرفر الموقع');
+            alert('مشكلة في سيرفر الموقع');
           }
         } catch (error) {
           console.error(error);
@@ -61,7 +61,7 @@ export default function UserPage() {
   ) : (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">العملاء</Typography>
+        <Typography variant="h4">رسائل العملاء</Typography>
       </Stack>
 
       <Card>
@@ -69,22 +69,24 @@ export default function UserPage() {
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
-                rowCount={clients?.length ? clients.length : 0}
+                rowCount={Messages?.length ? Messages.length : 0}
                 headLabel={[
                   { id: 'name', label: 'الاسم' },
                   { id: 'email', label: 'الايميل' },
                   { id: 'number', label: 'رقم التليفون' },
+                  { id: 'message', label: 'الرسالة' },
                 ]}
               />
               <TableBody>
-                {clients.map((row) => (
+                {Messages.map((row) => (
                   <UserTableRow
                     router={router}
-                    key={row.id}
-                    id={row.id}
+                    key={row._id}
+                    id={row._id}
                     name={row.name}
                     number={row.number}
                     email={row.email}
+                    message={row.message}
                   />
                 ))}
 

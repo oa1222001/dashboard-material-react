@@ -4,11 +4,11 @@ import { Navigate } from 'react-router-dom';
 
 import { accountContext } from 'src/utils/constants';
 
-import { UserView } from 'src/sections/user/view';
+import { ContactUsMessages } from 'src/sections/get_contact_us/view';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function ContactUsMessagesPage() {
   const account = useContext(accountContext);
 
   return account?.role === '' ? (
@@ -19,7 +19,7 @@ export default function UserPage() {
         <title> Dashboard </title>
       </Helmet>
 
-      <UserView />
+      <ContactUsMessages />
     </>
   );
 }

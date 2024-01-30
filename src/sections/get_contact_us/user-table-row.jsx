@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 
 // ----------------------------------------------------------------------
 
-export default function UserTableRow({ name, avatarUrl, email, number, id, router }) {
+export default function UserTableRow({ name, avatarUrl, email, number, message }) {
   return (
     <TableRow hover tabIndex={-1} role="checkbox">
       <TableCell component="th" scope="row" padding="none">
@@ -23,6 +23,7 @@ export default function UserTableRow({ name, avatarUrl, email, number, id, route
       <TableCell>{email}</TableCell>
 
       <TableCell>{number}</TableCell>
+      <TableCell>{message}</TableCell>
     </TableRow>
   );
 }
@@ -32,6 +33,5 @@ UserTableRow.propTypes = {
   email: PropTypes.any,
   name: PropTypes.any,
   number: PropTypes.any,
-  id: PropTypes.any,
-  router: PropTypes.any,
+  message: PropTypes.any,
 };

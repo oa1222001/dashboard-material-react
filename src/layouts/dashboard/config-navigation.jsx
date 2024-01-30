@@ -18,6 +18,11 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   {
+    title: 'Admins',
+    path: '/admin',
+    icon: icon('ic_user'),
+  },
+  {
     title: 'المنتجات',
     path: '/products',
     icon: icon('ic_cart'),
@@ -26,6 +31,11 @@ const navConfig = [
     title: 'الطلبات',
     path: '/orders',
     icon: icon('ic_cart'),
+  },
+  {
+    title: 'رسائل العملاء',
+    path: '/contactus',
+    icon: icon('ic_user'),
   },
 ];
 

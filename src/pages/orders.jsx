@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-import { BlogView } from 'src/sections/blog/view';
+import { OrdersView } from 'src/sections/orders/view';
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ export default function BlogPage() {
         <title> Dashboard </title>
       </Helmet>
 
-      <BlogView />
+      <OrdersView />
     </>
   );
 }
