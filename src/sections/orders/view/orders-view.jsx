@@ -5,6 +5,7 @@ import {
   Table,
   Button,
   Dialog,
+  Divider,
   TableRow,
   Container,
   TableBody,
@@ -15,7 +16,6 @@ import {
   DialogActions,
   TableContainer,
   CircularProgress,
-  Divider,
 } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';

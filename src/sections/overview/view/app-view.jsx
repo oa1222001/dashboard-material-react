@@ -643,7 +643,7 @@ export default function AppView() {
           <List>
             {formData.promocodes.map((p, index) => (
               <ListItem key={p.id}>
-                <ListItemText primary={`${p?.promocode},`} />
+                <ListItemText primary={`${p?.promocode}`} />
                 <ListItemText primary={`${p?.type === 'client' ? 'عميل' : 'بائع'} ,`} />
 
                 <ListItemText
