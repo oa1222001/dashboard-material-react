@@ -9,16 +9,16 @@ import {
   Stack,
   Button,
   Dialog,
+  Select,
   Divider,
+  MenuItem,
   TextField,
+  InputLabel,
   DialogTitle,
+  FormControl,
   DialogContent,
   DialogActions,
   CircularProgress,
-  FormControl,
-  Select,
-  InputLabel,
-  MenuItem,
 } from '@mui/material';
 
 // import { products } from 'src/_mock/products';
@@ -102,6 +102,7 @@ export default function ProductsView() {
   const [isLoading, setIsLoading] = useState(true);
   const onDelete = async () => {
     try {
+      console.log(p.id);
       const response = await fetch(`${BACKEND_URL}/admin/deleteproduct`, {
         method: 'DELETE',
         headers: {
@@ -124,20 +125,33 @@ export default function ProductsView() {
   };
 
   const handleAddProduct = async () => {
+    const formData = new FormData();
+    newProduct.images.forEach((image, index) => {
+      formData.append(`images`, image);
+    });
+    selectedCategories.forEach((c, index) => {
+      formData.append(`subcategories`, c);
+    });
+    // console.log(selectedCategories);
+    formData.append('name', newProduct.name);
+    // formData.append('subcategories', selectedCategories);
+    formData.append('price', newProduct.price);
+    formData.append('discount', newProduct.discount === '' ? '0' : newProduct.discount);
+    formData.append('available_amount', newProduct.available_amount);
+    formData.append('wholesale_offers', newProduct.wholesale_offers);
+    formData.append('description', newProduct.description);
+    // console.log('formData');
+    // console.log(formData.getAll('subcategories'));
+    // console.log(newProduct.available_amount);
     // Implement your logic to add a new admin
     try {
-      const response = await fetch(`${BACKEND_URL}/admin/addadmin`, {
+      const response = await fetch(`${BACKEND_URL}/admin/addproduct`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          // 'Content-Type': 'application/json',
           authorization: `Bearer ${account.token}`,
         },
-        // body: JSON.stringify({
-        //   name: newAdmin.name,
-        //   email: newAdmin.email,
-        //   number: newAdmin.number,
-        //   password: newAdmin.password,
-        // }),
+        body: formData,
       });
 
       if (Number(response.status) === 200) {
@@ -145,14 +159,16 @@ export default function ProductsView() {
         router.reload();
       } else {
         // Handle error case
-        console.error('sssssssssssssssssssssssssssssss');
+        console.error(response);
 
-        alert('مشكلة في سيرفر الموقع');
+        // alert('مشكلة في سيرفر الموقع');
       }
     } catch (error) {
       console.error(error);
       alert('مشكلة في سيرفر الموقع');
     }
+    // console.log(selectedCategories);
+    // console.log(newProduct);
   };
 
   useEffect(() => {
@@ -181,7 +197,36 @@ export default function ProductsView() {
     fetchProducts();
   }, [account]);
 
-  const editAvailableAmount = async () => {};
+  const editAvailableAmount = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/admin/updateproductamount`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${account.token}`,
+        },
+        body: JSON.stringify({
+          id: p.id,
+          amount: p.available_amount,
+        }),
+      });
+      console.log(p.id);
+      console.log(p.available_amount);
+      if (response.ok) {
+        router.reload();
+
+        // setIsLoading(false);
+      } else {
+        // console.error('Failed to fetch products');
+        // setIsLoading(false);
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+      // console.error('Error fetching products:', error);
+      // setIsLoading(false);
+    }
+  };
 
   return (
     <Container>
@@ -217,7 +262,7 @@ export default function ProductsView() {
               onChange={(e) => setNewProduct((prev) => ({ ...prev, price: e.target.value }))}
             />
             <TextField
-              label="خصم ان وجد"
+              label="خصم بنسبة مئوية ان وجد و يجب ان يكون قيمة من 1 ل 99"
               variant="outlined"
               fullWidth
               value={newProduct.discount}

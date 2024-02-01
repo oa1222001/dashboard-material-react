@@ -13,6 +13,7 @@ export const ContactUsMessagesPage = lazy(() => import('src/pages/contactusmessa
 export const AdminPage = lazy(() => import('src/pages/admin'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
+export const CategoriesPage = lazy(() => import('src/pages/categories'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -35,6 +36,7 @@ export default function Router() {
         { path: 'contactus', element: <ContactUsMessagesPage /> },
         { path: 'admin', element: <AdminPage /> },
         { path: 'products', element: <ProductsPage /> },
+        { path: 'categories', element: <CategoriesPage /> },
         { path: 'orders', element: <OrdersPage /> },
       ],
     },

@@ -18,16 +18,16 @@ import {
   CircularProgress,
 } from '@mui/material';
 
-import { useRouter } from 'src/routes/hooks';
+// import { useRouter } from 'src/routes/hooks';
 
 import { BACKEND_URL, accountContext } from 'src/utils/constants';
 
 export default function OrdersPage() {
   const account = useContext(accountContext);
-  const router = useRouter();
+  // const router = useRouter();
 
   const [orders, setOrders] = useState([]);
-  const [orderProducts, setOrderProducts] = useState([]);
+  // const [orderProducts, setOrderProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
