@@ -1,14 +1,21 @@
+import { useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Navigate } from 'react-router-dom';
+
+import { accountContext } from 'src/utils/constants';
 
 import { CategoriesView } from 'src/sections/categories/view';
 
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
-  return (
+  const account = useContext(accountContext);
+  return account?.role === '' ? (
+    <Navigate to="/login" replace />
+  ) : (
     <>
       <Helmet>
-        <title> Products </title>
+        <title> Dashboard </title>
       </Helmet>
 
       <CategoriesView />

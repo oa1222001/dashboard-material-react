@@ -43,6 +43,7 @@ export default function OrdersPage() {
         if (response.ok) {
           const result = await response.json();
           // console.log(result);
+          result.orders.sort((a, b) => new Date(b.date) - new Date(a.date));
           setOrders(result.orders);
           setIsLoading(false);
         } else {
@@ -66,7 +67,7 @@ export default function OrdersPage() {
       const response = await fetch(`${BACKEND_URL}/client/products/getproduct/${p.id}`);
       // console.log(response);
       const product = await response.json();
-      console.log(product);
+      // console.log(product);
 
       return {
         amount: p.amount,

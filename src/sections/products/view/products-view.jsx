@@ -76,11 +76,11 @@ export default function ProductsView() {
         setP(result.product);
         setOpenModal(true);
       } else {
-        console.error('Failed to fetch products');
+        console.error('Failed to fetch product');
         setIsLoading(false);
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error fetching product:', error);
       setIsLoading(false);
     }
   };
@@ -95,14 +95,14 @@ export default function ProductsView() {
 
   const handleChangeCategories = (event) => {
     setSelectedCategories(event.target.value);
-    console.log(event.target.value);
+    // console.log(event.target.value);
   };
 
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const onDelete = async () => {
     try {
-      console.log(p.id);
+      // console.log(p.id);
       const response = await fetch(`${BACKEND_URL}/admin/deleteproduct`, {
         method: 'DELETE',
         headers: {
@@ -125,50 +125,78 @@ export default function ProductsView() {
   };
 
   const handleAddProduct = async () => {
-    const formData = new FormData();
-    newProduct.images.forEach((image, index) => {
-      formData.append(`images`, image);
-    });
-    selectedCategories.forEach((c, index) => {
-      formData.append(`subcategories`, c);
-    });
-    // console.log(selectedCategories);
-    formData.append('name', newProduct.name);
-    // formData.append('subcategories', selectedCategories);
-    formData.append('price', newProduct.price);
-    formData.append('discount', newProduct.discount === '' ? '0' : newProduct.discount);
-    formData.append('available_amount', newProduct.available_amount);
-    formData.append('wholesale_offers', newProduct.wholesale_offers);
-    formData.append('description', newProduct.description);
-    // console.log('formData');
-    // console.log(formData.getAll('subcategories'));
-    // console.log(newProduct.available_amount);
-    // Implement your logic to add a new admin
-    try {
-      const response = await fetch(`${BACKEND_URL}/admin/addproduct`, {
-        method: 'POST',
-        headers: {
-          // 'Content-Type': 'application/json',
-          authorization: `Bearer ${account.token}`,
-        },
-        body: formData,
+    let flag = true;
+    if (
+      !newProduct.images.length > 0 ||
+      !selectedCategories.length > 0 ||
+      !newProduct.name ||
+      !newProduct.price ||
+      !newProduct.available_amount ||
+      !newProduct.wholesale_offers ||
+      !newProduct.description
+    ) {
+      alert('ادخل بيانات المنتج بشكل صحيح');
+      flag = false;
+    } else {
+      let totalSize = 0;
+      newProduct.images.forEach((im) => {
+        if (!im?.type.includes('image')) {
+          flag = false;
+        }
+        totalSize += im.size;
       });
-
-      if (Number(response.status) === 200) {
-        // Update admins state with the new admin
-        router.reload();
-      } else {
-        // Handle error case
-        console.error(response);
-
-        // alert('مشكلة في سيرفر الموقع');
+      const totalSizeInMegabytes = totalSize / (1024 * 1024);
+      if (totalSizeInMegabytes > 50) {
+        alert('حجم مجموع الصور يجب ان يكون اقل من 50 ميجا');
+        flag = false;
       }
-    } catch (error) {
-      console.error(error);
-      alert('مشكلة في سيرفر الموقع');
     }
-    // console.log(selectedCategories);
-    // console.log(newProduct);
+    if (flag) {
+      const formData = new FormData();
+      newProduct.images.forEach((image, index) => {
+        formData.append(`images`, image);
+      });
+      selectedCategories.forEach((c, index) => {
+        formData.append(`subcategories`, c);
+      });
+      // console.log(selectedCategories);
+      formData.append('name', newProduct.name);
+      // formData.append('subcategories', selectedCategories);
+      formData.append('price', newProduct.price);
+      formData.append('discount', newProduct.discount === '' ? '0' : newProduct.discount);
+      formData.append('available_amount', newProduct.available_amount);
+      formData.append('wholesale_offers', newProduct.wholesale_offers);
+      formData.append('description', newProduct.description);
+      // console.log('formData');
+      // console.log(formData.getAll('subcategories'));
+      // console.log(newProduct.available_amount);
+      // Implement your logic to add a new admin
+      try {
+        const response = await fetch(`${BACKEND_URL}/admin/addproduct`, {
+          method: 'POST',
+          headers: {
+            // 'Content-Type': 'application/json',
+            authorization: `Bearer ${account.token}`,
+          },
+          body: formData,
+        });
+
+        if (Number(response.status) === 200) {
+          // Update admins state with the new admin
+          router.reload();
+        } else {
+          // Handle error case
+          console.error(response);
+
+          // alert('مشكلة في سيرفر الموقع');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('مشكلة في سيرفر الموقع');
+      }
+    }
+
+    // console.log(newProduct.images);
   };
 
   useEffect(() => {
@@ -179,7 +207,7 @@ export default function ProductsView() {
         if (response.ok) {
           const result = await response.json();
           const resultCategories = await responseCategories.json();
-          console.log(result.products);
+          // console.log(result.products);
           setProducts(result.products);
           setCategoriesAndSubcategories(resultCategories.categories);
 
@@ -198,33 +226,44 @@ export default function ProductsView() {
   }, [account]);
 
   const editAvailableAmount = async () => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/admin/updateproductamount`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${account.token}`,
-        },
-        body: JSON.stringify({
-          id: p.id,
-          amount: p.available_amount,
-        }),
-      });
-      console.log(p.id);
-      console.log(p.available_amount);
-      if (response.ok) {
-        router.reload();
+    let flag = true;
+    if (!Number(p.available_amount)) {
+      alert('ادخل رقم للكمية المتاحة');
+      flag = false;
+    }
+    if (Number(p.available_amount) < 0) {
+      alert('ادخل رقم للكمية المتاحة اكبر من او يساوي صفر');
+      flag = false;
+    }
+    if (flag) {
+      try {
+        const response = await fetch(`${BACKEND_URL}/admin/updateproductamount`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${account.token}`,
+          },
+          body: JSON.stringify({
+            id: p.id,
+            amount: p.available_amount,
+          }),
+        });
+        // console.log(p.id);
+        // console.log(p.available_amount);
+        if (response.ok) {
+          router.reload();
 
+          // setIsLoading(false);
+        } else {
+          // console.error('Failed to fetch products');
+          // setIsLoading(false);
+          console.log(response);
+        }
+      } catch (error) {
+        console.log(error);
+        // console.error('Error fetching products:', error);
         // setIsLoading(false);
-      } else {
-        // console.error('Failed to fetch products');
-        // setIsLoading(false);
-        console.log(response);
       }
-    } catch (error) {
-      console.log(error);
-      // console.error('Error fetching products:', error);
-      // setIsLoading(false);
     }
   };
 
@@ -286,9 +325,12 @@ export default function ProductsView() {
                 setNewProduct((prev) => ({ ...prev, wholesale_offers: e.target.value }))
               }
             />
+            <label htmlFor="images">ادخل صور بمجموع 50 ميجابايت ك حد اقصى</label>
             <input
+              id="images"
               type="file"
               multiple
+              accept="image/*"
               onChange={(e) => {
                 const files = Array.from(e.target.files);
                 setNewProduct((prev) => ({ ...prev, images: files }));

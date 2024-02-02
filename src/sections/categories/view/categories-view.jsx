@@ -80,55 +80,74 @@ export default function CategoriesView() {
   };
 
   const handleAddCategory = async () => {
-    const form = new FormData();
-    form.append('image', newCategory.image);
-    form.append('name', newCategory.name);
-    console.log(newCategory);
+    let flag = true;
+    if (!newCategory.name || !newCategory?.image || !newCategory.image?.type?.includes('image')) {
+      alert('ادخل صورة و اسم فئة');
+      flag = false;
+    } else {
+      const fileSizeInMegabytes = newCategory.image.size / (1024 * 1024); // Convert bytes to megabytes
 
-    try {
-      // console.log(account.token);
-      const response = await fetch(`${BACKEND_URL}/admin/addcategory`, {
-        method: 'POST',
-        body: form,
-        headers: {
-          authorization: `Bearer ${account.token}`, // Include the authorization header
-        },
-      });
-
-      if (response.ok) {
-        router.reload();
-        // console.log('Logo uploaded successfully!');
-        // You may update the state or perform additional actions upon success
-      } else {
-        // console.error('Logo upload failed.');
-        console.log(response);
+      if (fileSizeInMegabytes > 10) {
+        alert('الصورة يجب ان تكون اصغر من 10 ميجابايت');
+        flag = false;
       }
-    } catch (error) {
-      console.error('Error uploading logo:', error.message);
+    }
+
+    if (flag) {
+      const form = new FormData();
+      form.append('image', newCategory.image);
+      form.append('name', newCategory.name);
+      // console.log(newCategory);
+
+      try {
+        // console.log(account.token);
+        const response = await fetch(`${BACKEND_URL}/admin/addcategory`, {
+          method: 'POST',
+          body: form,
+          headers: {
+            authorization: `Bearer ${account.token}`, // Include the authorization header
+          },
+        });
+
+        if (response.ok) {
+          router.reload();
+          // console.log('Logo uploaded successfully!');
+          // You may update the state or perform additional actions upon success
+        } else {
+          // console.error('Logo upload failed.');
+          console.log(response);
+        }
+      } catch (error) {
+        console.error('Error uploading logo:', error.message);
+      }
     }
   };
 
   const handleAddSubcategory = async () => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/admin/addsubcat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${account.token}`,
-        },
-        body: JSON.stringify({
-          id: category.id,
-          name: newSubCategory,
-        }),
-      });
-      if (response.ok) {
-        router.reload();
-      } else {
+    if (!newSubCategory) {
+      alert('ادخل اسم فئة فرعية');
+    } else {
+      try {
+        const response = await fetch(`${BACKEND_URL}/admin/addsubcat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${account.token}`,
+          },
+          body: JSON.stringify({
+            id: category.id,
+            name: newSubCategory,
+          }),
+        });
+        if (response.ok) {
+          router.reload();
+        } else {
+          alert('مشكلة في سيرفر الموقع');
+        }
+      } catch (error) {
+        console.error(error);
         alert('مشكلة في سيرفر الموقع');
       }
-    } catch (error) {
-      console.error(error);
-      alert('مشكلة في سيرفر الموقع');
     }
   };
 
@@ -138,7 +157,7 @@ export default function CategoriesView() {
         const response = await fetch(`${BACKEND_URL}/client/products/getcategories`);
         if (response.ok) {
           const result = await response.json();
-          console.log(result.categories);
+          // console.log(result.categories);
           setCategories(result.categories);
 
           setIsLoading(false);

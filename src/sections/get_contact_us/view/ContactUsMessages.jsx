@@ -41,7 +41,8 @@ export default function ContactUsMessagesPage() {
 
           if (Number(responseMessages.status) === 200) {
             const resultMessages = await responseMessages.json();
-            console.log(resultMessages.messages);
+            // console.log(resultMessages.messages);
+            resultMessages.messages.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             setMessages((prev) => [...resultMessages.messages]);
             setIsLoading(false);

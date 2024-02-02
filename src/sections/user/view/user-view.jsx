@@ -41,7 +41,7 @@ export default function UserPage() {
 
           if (Number(responseClients.status) === 200) {
             const resultClients = await responseClients.json();
-            console.log(resultClients.clients);
+            // console.log(resultClients.clients);
 
             setClients((prev) => [...resultClients.clients]);
             setIsLoading(false);

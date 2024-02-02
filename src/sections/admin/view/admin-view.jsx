@@ -48,7 +48,7 @@ export default function AdminPage() {
 
           if (Number(responseAdmins.status) === 200) {
             const resultAdmins = await responseAdmins.json();
-            console.log(account.token);
+            // console.log(account.token);
 
             setAdmins((prev) => [...resultAdmins.admins]);
             setIsLoading(false);
@@ -66,33 +66,37 @@ export default function AdminPage() {
 
   const handleAddAdmin = async () => {
     // Implement your logic to add a new admin
-    try {
-      const response = await fetch(`${BACKEND_URL}/admin/addadmin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${account.token}`,
-        },
-        body: JSON.stringify({
-          name: newAdmin.name,
-          email: newAdmin.email,
-          number: newAdmin.number,
-          password: newAdmin.password,
-        }),
-      });
+    if (!newAdmin.name || !newAdmin.email || !newAdmin.password || !newAdmin.number) {
+      alert('ادخل بيانات الادمن بشكل صحيح كما هو موضح و الرقم الدولي يبدأ ب +');
+    } else {
+      try {
+        const response = await fetch(`${BACKEND_URL}/admin/addadmin`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${account.token}`,
+          },
+          body: JSON.stringify({
+            name: newAdmin.name,
+            email: newAdmin.email,
+            number: newAdmin.number,
+            password: newAdmin.password,
+          }),
+        });
 
-      if (Number(response.status) === 200) {
-        // Update admins state with the new admin
-        router.reload();
-      } else {
-        // Handle error case
-        console.error('sssssssssssssssssssssssssssssss');
+        if (Number(response.status) === 200) {
+          // Update admins state with the new admin
+          router.reload();
+        } else {
+          // Handle error case
+          // console.error(response);
 
+          alert('مشكلة في سيرفر الموقع, تأكد من ان بياناتك سليمة');
+        }
+      } catch (error) {
+        console.error(error);
         alert('مشكلة في سيرفر الموقع');
       }
-    } catch (error) {
-      console.error(error);
-      alert('مشكلة في سيرفر الموقع');
     }
   };
 

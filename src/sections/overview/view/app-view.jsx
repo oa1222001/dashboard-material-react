@@ -113,7 +113,7 @@ export default function AppView() {
             // console.log(resultAboutProducts);
             // console.log(resultPromocodes);
             // console.log(resultSlider);
-            console.log(resultFaq);
+            // console.log(resultFaq);
 
             setIsLoading(false);
 
@@ -167,29 +167,43 @@ export default function AppView() {
   };
 
   const handleLogoUpload = async () => {
-    const form = new FormData();
-    form.append('image', formData.logoFile);
+    let flag = true;
 
-    try {
-      // console.log(account.token);
-      const response = await fetch(`${BACKEND_URL}/admin/editlogo`, {
-        method: 'POST',
-        body: form,
-        headers: {
-          authorization: `Bearer ${account.token}`, // Include the authorization header
-        },
-      });
+    if (!formData.logoFile || !formData.logoFile?.type?.includes('image')) {
+      alert('ادخل صورة لوجو');
+      flag = false;
+    } else {
+      const fileSizeInMegabytes = formData.logoFile / (1024 * 1024); // Convert bytes to megabytes
 
-      if (response.ok) {
-        router.reload();
-        console.log('Logo uploaded successfully!');
-        // You may update the state or perform additional actions upon success
-      } else {
-        console.error('Logo upload failed.');
-        console.log(response);
+      if (fileSizeInMegabytes > 10) {
+        alert('الصورة يجب ان تكون اقل من 10 ميجابايت');
+        flag = false;
       }
-    } catch (error) {
-      console.error('Error uploading logo:', error.message);
+    }
+    if (flag) {
+      const form = new FormData();
+      form.append('image', formData.logoFile);
+      console.log(formData.logoFile.type);
+      try {
+        const response = await fetch(`${BACKEND_URL}/admin/editlogo`, {
+          method: 'POST',
+          body: form,
+          headers: {
+            authorization: `Bearer ${account.token}`, // Include the authorization header
+          },
+        });
+
+        if (response.ok) {
+          router.reload();
+          // console.log('Logo uploaded successfully!');
+          // You may update the state or perform additional actions upon success
+        } else {
+          // console.error('Logo upload failed.');
+          console.log(response);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -407,59 +421,97 @@ export default function AppView() {
   };
 
   const handleAddSlide = async () => {
-    const form = new FormData();
-    form.append('image', formData.newSlideImage);
-    form.append('title', formData.newSlideTitle);
-    form.append('description', formData.newSlideDescription);
+    let flag = true;
+    if (
+      !formData.newSlideImage ||
+      !formData.newSlideImage?.type?.includes('image') ||
+      !formData.newSlideTitle ||
+      !formData.newSlideDescription
+    ) {
+      alert('ادخل بيانات السلايد بشكل صحيح, صورة و عنوان و وصف');
+      flag = false;
+    } else {
+      const fileSizeInMegabytes = formData.newSlideImage / (1024 * 1024); // Convert bytes to megabytes
 
-    try {
-      // console.log(account.token);
-      const response = await fetch(`${BACKEND_URL}/admin/addsliderimage`, {
-        method: 'POST',
-        body: form,
-        headers: {
-          authorization: `Bearer ${account.token}`, // Include the authorization header
-        },
-      });
-
-      if (response.ok) {
-        router.reload();
-        console.log('Slider uploaded successfully!');
-        // You may update the state or perform additional actions upon success
-      } else {
-        console.error('Slider upload failed.');
-        console.log(response);
+      if (fileSizeInMegabytes > 10) {
+        alert('الصورة يجب ان تكون اقل من 10 ميجابايت');
+        flag = false;
       }
-    } catch (error) {
-      console.error('Error uploading Slider:', error.message);
+    }
+    if (flag) {
+      const form = new FormData();
+      form.append('image', formData.newSlideImage);
+      form.append('title', formData.newSlideTitle);
+      form.append('description', formData.newSlideDescription);
+
+      try {
+        // console.log(account.token);
+        const response = await fetch(`${BACKEND_URL}/admin/addsliderimage`, {
+          method: 'POST',
+          body: form,
+          headers: {
+            authorization: `Bearer ${account.token}`, // Include the authorization header
+          },
+        });
+
+        if (response.ok) {
+          router.reload();
+          // console.log('Slider uploaded successfully!');
+          // You may update the state or perform additional actions upon success
+        } else {
+          // console.error('Slider upload failed.');
+          console.log(response);
+        }
+      } catch (error) {
+        console.error('Error uploading Slider:', error.message);
+      }
     }
   };
 
   const handleAboutProductsSubmit = async () => {
-    const form = new FormData();
-    form.append('image', formData.aboutProducts.newAboutImage);
-    form.append('message', formData.aboutProducts.message);
+    let flag = true;
+    if (
+      !formData.aboutProducts.newAboutImage ||
+      !formData.aboutProducts.newAboutImage?.type?.includes('image') ||
+      !formData.aboutProducts.message
+    ) {
+      alert('ادخل بيانات عن منتجاتنا بشكل صحيح, صورة و وصف');
+      flag = false;
+    } else {
+      const fileSizeInMegabytes = formData.aboutProducts.newAboutImage / (1024 * 1024); // Convert bytes to megabytes
 
-    try {
-      // console.log(account.token);
-      const response = await fetch(`${BACKEND_URL}/admin/editaboutproducts`, {
-        method: 'POST',
-        body: form,
-        headers: {
-          authorization: `Bearer ${account.token}`, // Include the authorization header
-        },
-      });
-
-      if (response.ok) {
-        router.reload();
-        console.log('Slider uploaded successfully!');
-        // You may update the state or perform additional actions upon success
-      } else {
-        console.error('Slider upload failed.');
-        console.log(response);
+      if (fileSizeInMegabytes > 10) {
+        alert('الصورة يجب ان تكون اقل من 10 ميجابايت');
+        flag = false;
       }
-    } catch (error) {
-      console.error('Error uploading Slider:', error.message);
+    }
+
+    if (flag) {
+      const form = new FormData();
+      form.append('image', formData.aboutProducts.newAboutImage);
+      form.append('message', formData.aboutProducts.message);
+
+      try {
+        // console.log(account.token);
+        const response = await fetch(`${BACKEND_URL}/admin/editaboutproducts`, {
+          method: 'POST',
+          body: form,
+          headers: {
+            authorization: `Bearer ${account.token}`, // Include the authorization header
+          },
+        });
+
+        if (response.ok) {
+          router.reload();
+          // console.log('Slider uploaded successfully!');
+          // You may update the state or perform additional actions upon success
+        } else {
+          // console.error('Slider upload failed.');
+          console.log(response);
+        }
+      } catch (error) {
+        console.error('Error uploading Slider:', error.message);
+      }
     }
   };
 
@@ -763,14 +815,14 @@ export default function AppView() {
               <input type="file" accept="image/*" onChange={handleSliderImageAdd} />
 
               <TextField
-                label="Title"
+                label="عنوان"
                 value={formData.newSlideTitle}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, newSlideTitle: e.target.value }))
                 }
               />
               <TextField
-                label="Description"
+                label="وصف"
                 value={formData.newSlideDescription}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, newSlideDescription: e.target.value }))
