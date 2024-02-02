@@ -27,6 +27,8 @@ import { useRouter } from 'src/routes/hooks';
 
 import { BACKEND_URL, accountContext } from 'src/utils/constants';
 
+import Label from 'src/components/label';
+
 // import ShopProductCard from '../product-card';
 
 // ----------------------------------------------------------------------
@@ -325,7 +327,7 @@ export default function ProductsView() {
                 setNewProduct((prev) => ({ ...prev, wholesale_offers: e.target.value }))
               }
             />
-            <label htmlFor="images">ادخل صور بمجموع 50 ميجابايت ك حد اقصى</label>
+            <Label htmlFor="images">ادخل صور بمجموع 50 ميجابايت ك حد اقصى</Label>
             <input
               id="images"
               type="file"
