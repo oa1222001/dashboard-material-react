@@ -42,7 +42,7 @@ export default function OrdersPage() {
         });
         if (response.ok) {
           const result = await response.json();
-          console.log(result);
+          // console.log(result);
           setOrders(result.orders);
           setIsLoading(false);
         } else {
@@ -86,7 +86,7 @@ export default function OrdersPage() {
       // }));
     });
     const products = await Promise.all(promises);
-    console.log(products);
+    // console.log(products);
     order.products = products;
     // order.isProductOk = isProductOk;
     setSelectedOrder(order);
@@ -123,7 +123,11 @@ export default function OrdersPage() {
                 </TableRow>
                 {orders.map((order) => (
                   <TableRow key={order._id}>
-                    <TableCell>{order.first_name.concat(' ').concat(order.last_name)}</TableCell>
+                    <TableCell>
+                      {order.first_name
+                        .concat(' ')
+                        .concat(order?.last_name === '' ? '' : order?.last_name)}
+                    </TableCell>
                     <TableCell>{order.first_number}</TableCell>
                     {order.second_number ? (
                       <TableCell>{order.second_number}</TableCell>
@@ -166,34 +170,9 @@ export default function OrdersPage() {
                 })}
               </Typography>
               <Typography variant="body1"> معلومات التوصيل</Typography>
-              <Typography variant="body1">
-                {' '}
-                {selectedOrder.delivery_destination.city.name} :مدينة
-              </Typography>
-              <Typography variant="body1">
-                {' '}
-                {selectedOrder.delivery_destination.district} :حي
-              </Typography>
-              <Typography variant="body1">
-                {' '}
-                {selectedOrder.delivery_destination.building_number} :رقم مبنى
-              </Typography>
-              <Typography variant="body1">
-                {' '}
-                {selectedOrder.delivery_destination.floor} :دور
-              </Typography>
-              <Typography variant="body1">
-                {' '}
-                {selectedOrder.delivery_destination.apartment} :رقم شقة
-              </Typography>
-              {selectedOrder.delivery_destination.additional_info ? (
-                <Typography variant="body1">
-                  {' '}
-                  {selectedOrder.delivery_destination.additional_info} :معلومات اضافية
-                </Typography>
-              ) : (
-                ''
-              )}
+              <Typography variant="body1"> {selectedOrder.city.name} :مدينة</Typography>
+              <Typography variant="body1"> {selectedOrder.destination} :عنوان</Typography>
+
               <Divider />
               <Typography variant="body1"> : المنتجات المطلوبة</Typography>
               <Divider />
