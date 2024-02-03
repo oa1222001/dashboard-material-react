@@ -463,7 +463,7 @@ export default function ProductsView() {
                         <>
                           <Typography variant="body1"> : عروض الجملة</Typography>
                           {p.wholesale_offers.map((o) => (
-                            <Typography variant="body1"> {o}</Typography>
+                            <Typography variant="body1"> {o?.trim() === '' ? '' : o}</Typography>
                           ))}
                         </>
                       ) : (
