@@ -133,7 +133,7 @@ export default function ProductsView() {
       !selectedCategories.length > 0 ||
       !newProduct.name ||
       !newProduct.price ||
-      !newProduct.available_amount ||
+      // !newProduct.available_amount ||
       !newProduct.wholesale_offers ||
       !newProduct.description
     ) {
@@ -167,7 +167,10 @@ export default function ProductsView() {
       formData.append('price', newProduct.price);
       formData.append('discount', newProduct.discount === '' ? '0' : newProduct.discount);
       formData.append('available_amount', newProduct.available_amount);
-      formData.append('wholesale_offers', newProduct.wholesale_offers);
+      formData.append(
+        'wholesale_offers',
+        newProduct.wholesale_offers.trim() === '' ? null : newProduct.wholesale_offers
+      );
       formData.append('description', newProduct.description);
       // console.log('formData');
       // console.log(formData.getAll('subcategories'));
