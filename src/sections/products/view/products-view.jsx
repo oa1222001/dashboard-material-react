@@ -133,8 +133,8 @@ export default function ProductsView() {
       !selectedCategories.length > 0 ||
       !newProduct.name ||
       !newProduct.price ||
-      // !newProduct.available_amount ||
-      !newProduct.wholesale_offers ||
+      !newProduct.available_amount ||
+      // !newProduct.wholesale_offers ||
       !newProduct.description
     ) {
       alert('ادخل بيانات المنتج بشكل صحيح');
