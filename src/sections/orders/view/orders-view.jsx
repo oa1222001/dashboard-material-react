@@ -63,11 +63,15 @@ export default function OrdersPage() {
     // let isProductOk = true;
     // console.log(order.products);
     // console.log(order.products[0].id);
+    // console.log(order.products);
     const promises = order.products.map(async (p) => {
       const response = await fetch(`${BACKEND_URL}/client/products/getproduct/${p.id}`);
+      // console.log(p);
       // console.log(response);
       const product = await response.json();
-      // console.log(product);
+      // console.log(product.product.image_urls);
+
+      // console.log(product.product.image_urls[0]);
 
       return {
         amount: p.amount,
@@ -89,6 +93,7 @@ export default function OrdersPage() {
     const products = await Promise.all(promises);
     // console.log(products);
     order.products = products;
+    // console.log(order.products);
     // order.isProductOk = isProductOk;
     setSelectedOrder(order);
     setShowDetailsDialog(true);
@@ -142,7 +147,9 @@ export default function OrdersPage() {
                       <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => handleViewDetails(order)}
+                        onClick={async () => {
+                          await handleViewDetails(order);
+                        }}
                       >
                         اظهر تفاصيل الطلب
                       </Button>
