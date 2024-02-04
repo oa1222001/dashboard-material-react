@@ -117,6 +117,8 @@ export default function AppView() {
 
             setIsLoading(false);
 
+            // console.log(resultLogocallussocial);
+
             setFormData({
               logo: resultLogocallussocial.logo,
               email: resultLogocallussocial.call_us.email,
@@ -124,8 +126,10 @@ export default function AppView() {
               location: resultLogocallussocial.call_us.location,
               socialMedia: {
                 Facebook: resultLogocallussocial.socialmedia.facebook,
-                Youtube: resultLogocallussocial.socialmedia.youtube,
                 Instagram: resultLogocallussocial.socialmedia.instagram,
+                Snapchat: resultLogocallussocial.socialmedia.snapchat,
+                Tiktok: resultLogocallussocial.socialmedia.tiktok,
+                'X (Twitter)': resultLogocallussocial.socialmedia['x (twitter)'],
               },
               cities: resultCities.cities.map((c) => ({
                 name: c.name,
@@ -241,7 +245,9 @@ export default function AppView() {
     e.preventDefault();
     if (
       !formData.socialMedia.Facebook ||
-      !formData.socialMedia.Youtube ||
+      !formData.socialMedia.Snapchat ||
+      !formData.socialMedia.Tiktok ||
+      !formData.socialMedia['X (Twitter)'] ||
       !formData.socialMedia.Instagram
     ) {
       alert('ادخل بيانات روابط التواصل');
@@ -255,8 +261,10 @@ export default function AppView() {
           },
           body: JSON.stringify({
             facebook: formData.socialMedia.Facebook,
-            youtube: formData.socialMedia.Youtube,
             instagram: formData.socialMedia.Instagram,
+            snapchat: formData.socialMedia.Snapchat,
+            tiktok: formData.socialMedia.Tiktok,
+            twitter: formData.socialMedia['X (Twitter)'],
           }),
         });
         if (Number(response.status) === 200) {
@@ -323,12 +331,36 @@ export default function AppView() {
   };
 
   const handlePromoCodeSubmit = async () => {
+    let flag = true;
     if (
-      formData?.newPromocode &&
-      formData?.newPromocodeType &&
-      formData?.newDiscountValue &&
-      formData?.newDiscountType
+      !formData?.newPromocode &&
+      !formData?.newPromocodeType &&
+      !formData?.newDiscountValue &&
+      !formData?.newDiscountType
     ) {
+      // console.log(formData);
+      alert('يرجى ادخال البيانات بشكل صحيح في الخصومات');
+      flag = false;
+    }
+    if (!Number(formData?.newDiscountValue)) {
+      alert('يرجى ادخال قيمة الخصم ك رقم كما هو موضح');
+      flag = false;
+    }
+    if (Number(formData?.newDiscountValue) <= 0 && formData?.newDiscountType === 'amount') {
+      alert('قيمة الخصم يجب ان تكون موجبة');
+      flag = false;
+    }
+    if (
+      formData?.newDiscountType === 'percentage' &&
+      (!Number(formData?.newDiscountValue) ||
+        Number(formData?.newDiscountValue) >= 100 ||
+        Number(formData?.newDiscountValue) <= 0)
+    ) {
+      flag = false;
+      alert('ادخل قيمة خصم ابتداءا من 1 و اصغر من مئة');
+    }
+
+    if (flag) {
       let discountvalue;
       if (formData.newDiscountType === 'amount' && Number(formData.newDiscountValue)) {
         discountvalue = formData.newDiscountValue;
@@ -341,6 +373,7 @@ export default function AppView() {
         discountvalue = Number(formData.newDiscountValue) / 100;
       }
       try {
+        console.log(discountvalue);
         const response = await fetch(`${BACKEND_URL}/admin/addpromocode`, {
           method: 'POST',
           headers: {
@@ -365,8 +398,6 @@ export default function AppView() {
         console.error(error);
         alert('مشكلة في سيرفر الموقع');
       }
-    } else {
-      alert('يرجى ادخال البيانات بشكل صحيح في الخصومات');
     }
   };
 
@@ -759,7 +790,7 @@ export default function AppView() {
                 <MenuItem value="amount">قيمة مالية</MenuItem>
               </Select>
               <InputLabel id="valuePromocode">
-                قيمة الخصم, لو نسبة ف يجب ان تكون من 0 الى 100
+                قيمة الخصم, لو نسبة ف يجب ان تكون من 1 الى 100
               </InputLabel>
 
               <TextField
