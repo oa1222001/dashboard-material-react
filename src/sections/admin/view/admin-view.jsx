@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
-import { Button, TextField, CircularProgress } from '@mui/material';
+import { InputLabel, Select, MenuItem, Button, TextField, CircularProgress } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 
@@ -22,7 +22,7 @@ import UserTableHead from '../user-table-head';
 
 export default function AdminPage() {
   const [admins, setAdmins] = useState([
-    { id: '1', name: 'name', email: 'email', number: 'number' },
+    { id: '1', name: 'name', email: 'email', number: 'number', role: 'admin' },
   ]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddAdmin, setShowAddAdmin] = useState(false); // State to manage visibility
@@ -31,6 +31,7 @@ export default function AdminPage() {
     email: '',
     number: '',
     password: '',
+    role: 'admin',
   });
 
   const account = useContext(accountContext);
@@ -70,6 +71,7 @@ export default function AdminPage() {
       alert('ادخل بيانات الادمن بشكل صحيح كما هو موضح و الرقم الدولي يبدأ ب +');
     } else {
       try {
+        // console.log(newAdmin);
         const response = await fetch(`${BACKEND_URL}/admin/addadmin`, {
           method: 'POST',
           headers: {
@@ -81,6 +83,7 @@ export default function AdminPage() {
             email: newAdmin.email,
             number: newAdmin.number,
             password: newAdmin.password,
+            role: newAdmin.role,
           }),
         });
 
@@ -89,7 +92,7 @@ export default function AdminPage() {
           router.reload();
         } else {
           // Handle error case
-          // console.error(response);
+          console.error(response);
 
           alert('مشكلة في سيرفر الموقع, تأكد من ان بياناتك سليمة');
         }
@@ -123,6 +126,16 @@ export default function AdminPage() {
               value={newAdmin.name}
               onChange={(e) => setNewAdmin((prev) => ({ ...prev, name: e.target.value }))}
             />
+            <InputLabel id="newDiscountTypeLabel">نوع المستخدم, ادمن او سوبر ادمن</InputLabel>
+            <Select
+              labelId="newDiscountTypeLabel"
+              label="نوع الخصم"
+              value={newAdmin.role}
+              onChange={(e) => setNewAdmin((prev) => ({ ...prev, role: e.target.value }))}
+            >
+              <MenuItem value="admin">Admin</MenuItem>
+              <MenuItem value="superadmin">Superadmin</MenuItem>
+            </Select>
             <TextField
               label="الايميل"
               variant="outlined"
@@ -161,6 +174,7 @@ export default function AdminPage() {
                   { id: 'name', label: 'الاسم' },
                   { id: 'email', label: 'الايميل' },
                   { id: 'number', label: 'رقم التليفون' },
+                  { id: 'role', label: 'ادمن او سوبر ادمن' },
                 ]}
               />
               <TableBody>
@@ -173,6 +187,7 @@ export default function AdminPage() {
                     name={row.name}
                     number={row.number}
                     email={row.email}
+                    role={row.role}
                   />
                 ))}
 

@@ -55,7 +55,7 @@ export default function ProductsView() {
     price: '',
     discount: '',
     available_amount: '',
-    wholesale_offers: '',
+    wholesale_offers: [],
     description: '',
     images: [],
     categoriesAndSub: [
@@ -74,7 +74,12 @@ export default function ProductsView() {
       const response = await fetch(`${BACKEND_URL}/client/products/getproduct/${pr.id}`);
       if (response.ok) {
         const result = await response.json();
-        // console.log(result.product);
+        // console.log(result.product.wholesale_offers.join('\n'));
+        result.product.wholesale_offers = result.product.wholesale_offers.join('\n');
+        result.product.discount = Number(result.product.discount)
+          ? Number(result.product.discount) * 100
+          : 0;
+
         setP(result.product);
         setOpenModal(true);
       } else {
@@ -167,15 +172,23 @@ export default function ProductsView() {
       formData.append('price', newProduct.price);
       formData.append('discount', newProduct.discount === '' ? '0' : newProduct.discount);
       formData.append('available_amount', newProduct.available_amount);
-      formData.append(
-        'wholesale_offers',
-        newProduct.wholesale_offers.trim() === '' ? null : newProduct.wholesale_offers
-      );
+
+      // formData.append(
+      //   'wholesale_offers',
+      //   newProduct.wholesale_offers.trim() === '' ? null : newProduct.wholesale_offers
+      // );
+      if (newProduct.wholesale_offers.split('\n').filter((line) => line.trim() !== '').length > 0) {
+        // formData.append('wholesale_offers', null);
+        newProduct.wholesale_offers
+          .split('\n')
+          .filter((line) => line.trim() !== '')
+          .forEach((offer) => {
+            formData.append('wholesale_offers', offer);
+          });
+      }
+      // console.log(formData);
       formData.append('description', newProduct.description);
-      // console.log('formData');
-      // console.log(formData.getAll('subcategories'));
-      // console.log(newProduct.available_amount);
-      // Implement your logic to add a new admin
+
       try {
         const response = await fetch(`${BACKEND_URL}/admin/addproduct`, {
           method: 'POST',
@@ -271,6 +284,125 @@ export default function ProductsView() {
       }
     }
   };
+  const editPrice = async () => {
+    let flag = true;
+    if (!Number(p.price)) {
+      alert('ادخل رقم للسعر');
+      flag = false;
+    }
+    if (Number(p.price) < 0) {
+      alert('ادخل رقم للسعر اكبر من او يساوي صفر');
+      flag = false;
+    }
+    if (flag) {
+      try {
+        const response = await fetch(`${BACKEND_URL}/admin/editproductprice`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${account.token}`,
+          },
+          body: JSON.stringify({
+            id: p.id,
+            price: p.price,
+          }),
+        });
+        // console.log(p.id);
+        // console.log(p.available_amount);
+        if (response.ok) {
+          router.reload();
+
+          // setIsLoading(false);
+        } else {
+          // console.error('Failed to fetch products');
+          // setIsLoading(false);
+          console.log(response);
+        }
+      } catch (error) {
+        console.log(error);
+        // console.error('Error fetching products:', error);
+        // setIsLoading(false);
+      }
+    }
+  };
+  const editWholesale = async () => {
+    let wholesale_offers = [''];
+    // console.log(p.wholesale_offers.split('\n').filter((line) => line.trim() !== ''));
+    if (p.wholesale_offers.split('\n').filter((line) => line.trim() !== '').length > 0) {
+      // formData.append('wholesale_offers', null);
+      wholesale_offers = p.wholesale_offers.split('\n').filter((line) => line.trim() !== '');
+    }
+    try {
+      const response = await fetch(`${BACKEND_URL}/admin/editproductwholesale`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${account.token}`,
+        },
+        body: JSON.stringify({
+          id: p.id,
+          wholesale_offers,
+        }),
+      });
+      // console.log(p.id);
+      // console.log(p.available_amount);
+      if (response.ok) {
+        router.reload();
+
+        // setIsLoading(false);
+      } else {
+        // console.error('Failed to fetch products');
+        // setIsLoading(false);
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+      // console.error('Error fetching products:', error);
+      // setIsLoading(false);
+    }
+  };
+  const editDiscount = async () => {
+    let flag = true;
+    // let discount =0
+    if (!Number(p.discount)) {
+      alert('ادخل رقم للخصم');
+      flag = false;
+    }
+    if (Number(p.discount) < 0 || Number(p.discount) >= 100) {
+      alert('ادخل رقم للخصم بالنسبة المئوية اكبر من او يساوي صفر و اصغر من 100');
+      flag = false;
+    }
+    if (flag) {
+      try {
+        const response = await fetch(`${BACKEND_URL}/admin/editproductdiscount`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${account.token}`,
+          },
+          body: JSON.stringify({
+            id: p.id,
+            discount: p.discount,
+          }),
+        });
+        // console.log(p.id);
+        // console.log(p.available_amount);
+        if (response.ok) {
+          router.reload();
+
+          // setIsLoading(false);
+        } else {
+          // console.error('Failed to fetch products');
+          // setIsLoading(false);
+          console.log(response);
+        }
+      } catch (error) {
+        console.log(error);
+        // console.error('Error fetching products:', error);
+        // setIsLoading(false);
+      }
+    }
+  };
 
   return (
     <Container>
@@ -325,9 +457,13 @@ export default function ProductsView() {
               label="عروض الجملة"
               variant="outlined"
               fullWidth
+              multiline
               value={newProduct.wholesale_offers}
               onChange={(e) =>
-                setNewProduct((prev) => ({ ...prev, wholesale_offers: e.target.value }))
+                setNewProduct((prev) => ({
+                  ...prev,
+                  wholesale_offers: e.target.value,
+                }))
               }
             />
             <Label htmlFor="images">ادخل صور بمجموع 50 ميجابايت ك حد اقصى</Label>
@@ -432,23 +568,38 @@ export default function ProductsView() {
                       <Typography variant="body1"> {p.description}</Typography>
                       <Divider />
                       <br />
-                      <Typography variant="body1">جنيه {p.price}</Typography>
+                      <TextField
+                        label="السعر بالجنيه"
+                        variant="outlined"
+                        fullWidth
+                        value={p.price}
+                        onChange={(e) => setP((prev) => ({ ...prev, price: e.target.value }))}
+                      />{' '}
+                      <Button onClick={editPrice} color="primary">
+                        عدل السعر
+                      </Button>
+                      {/* <Typography variant="body1">جنيه {p.price}</Typography> */}
                       <br />
-                      {Number(p.discount) === 0 ? (
-                        ''
-                      ) : (
-                        <>
-                          <Divider />
-                          <Typography variant="body1">{Number(p.discount) * 100}% خصم</Typography>
-                          <br />
-                        </>
-                      )}
+                      <Divider />
+                      <TextField
+                        label="الخصم بالنسبة المئوية"
+                        variant="outlined"
+                        fullWidth
+                        value={p.discount}
+                        onChange={(e) => setP((prev) => ({ ...prev, discount: e.target.value }))}
+                      />{' '}
+                      <Button onClick={editDiscount} color="primary">
+                        عدل الخصم
+                      </Button>
+                      {/* <Typography variant="body1">{Number(p.discount) * 100}% خصم</Typography> */}
+                      <br />
                       <Divider />
                       <br />
                       <TextField
                         label="الكمية المتاحة من المنتج"
                         variant="outlined"
                         fullWidth
+                        multiline
                         value={p.available_amount}
                         onChange={(e) =>
                           setP((prev) => ({ ...prev, available_amount: e.target.value }))
@@ -461,10 +612,26 @@ export default function ProductsView() {
                       <br />
                       {p?.wholesale_offers?.length > 0 ? (
                         <>
-                          <Typography variant="body1"> : عروض الجملة</Typography>
-                          {p.wholesale_offers.map((o) => (
-                            <Typography variant="body1"> {o ? '' : o}</Typography>
-                          ))}
+                          <TextField
+                            label="عروض الجملة"
+                            variant="outlined"
+                            fullWidth
+                            multiline
+                            value={p.wholesale_offers}
+                            onChange={(e) =>
+                              setP((prev) => ({ ...prev, wholesale_offers: e.target.value }))
+                            }
+                          />{' '}
+                          <Button onClick={editWholesale} color="primary">
+                            عدل العرض
+                          </Button>
+                          {/* <Typography variant="body1"> : عروض الجملة</Typography>
+                          {p?.wholesale_offers?.map((o) => (
+                            <Typography variant="body1">
+                              {' '}
+                              {!o || o?.trim() === '' ? '' : o}
+                            </Typography>
+                          ))} */}
                         </>
                       ) : (
                         ''

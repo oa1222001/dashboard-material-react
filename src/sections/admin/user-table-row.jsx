@@ -11,7 +11,16 @@ import { BACKEND_URL } from 'src/utils/constants';
 
 // ----------------------------------------------------------------------
 
-export default function UserTableRow({ name, avatarUrl, email, number, id, router, account }) {
+export default function UserTableRow({
+  role,
+  name,
+  avatarUrl,
+  email,
+  number,
+  id,
+  router,
+  account,
+}) {
   const handleDelete = async () => {
     try {
       const response = await fetch(`${BACKEND_URL}/admin/deleteadmin`, {
@@ -50,6 +59,7 @@ export default function UserTableRow({ name, avatarUrl, email, number, id, route
       <TableCell>{email}</TableCell>
 
       <TableCell>{number}</TableCell>
+      <TableCell>{role}</TableCell>
 
       <TableCell>
         <Button color="error" onClick={handleDelete}>
@@ -67,5 +77,6 @@ UserTableRow.propTypes = {
   name: PropTypes.any,
   number: PropTypes.any,
   id: PropTypes.any,
+  role: PropTypes.any,
   router: PropTypes.any,
 };
