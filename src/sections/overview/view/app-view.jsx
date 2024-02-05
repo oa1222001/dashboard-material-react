@@ -50,6 +50,7 @@ export default function AppView() {
     aboutProducts: {
       image: '/path/to/about-image.jpg',
       message: 'Our products are amazing!',
+      aboutUs: 'we are amazing',
     },
     faq: [
       {
@@ -151,6 +152,7 @@ export default function AppView() {
               aboutProducts: {
                 image: resultAboutProducts.image,
                 message: resultAboutProducts.aboutProducts,
+                aboutUs: resultAboutProducts.aboutUs,
               },
               faq: resultFaq.faq.map((f) => ({ id: f.id, question: f.question, answer: f.answer })),
             });
@@ -504,9 +506,10 @@ export default function AppView() {
     if (
       !formData.aboutProducts.newAboutImage ||
       !formData.aboutProducts.newAboutImage?.type?.includes('image') ||
-      !formData.aboutProducts.message
+      !formData.aboutProducts.message ||
+      !formData.aboutProducts.aboutUs
     ) {
-      alert('ادخل بيانات عن منتجاتنا بشكل صحيح, صورة و وصف');
+      alert('ادخل بيانات عن منتجاتنا ونبذة عنا بشكل صحيح, صورة و و عن منتجاتنا و نبذة عنا');
       flag = false;
     } else {
       const fileSizeInMegabytes = formData.aboutProducts.newAboutImage / (1024 * 1024); // Convert bytes to megabytes
@@ -521,6 +524,7 @@ export default function AppView() {
       const form = new FormData();
       form.append('image', formData.aboutProducts.newAboutImage);
       form.append('message', formData.aboutProducts.message);
+      form.append('aboutUs', formData.aboutProducts.aboutUs);
 
       try {
         // console.log(account.token);
@@ -869,7 +873,7 @@ export default function AppView() {
       {/* about products section  */}
       <Grid item xs={12} mt={4}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          عن منتجاتنا
+          نبذة عنا و عن منتجاتنا
         </Typography>
         <img src={formData.aboutProducts.image} alt="About Products" style={{ maxWidth: '100%' }} />
         <input
@@ -883,12 +887,24 @@ export default function AppView() {
           }
         />
         <TextField
-          label="الرسالة"
+          label="عن منتجاتنا"
           value={formData.aboutProducts.message}
+          // multiline
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
               aboutProducts: { ...formData.aboutProducts, message: e.target.value },
+            }))
+          }
+        />
+        <TextField
+          label="نبذة عننا"
+          // multiline
+          value={formData.aboutProducts.aboutUs}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              aboutProducts: { ...formData.aboutProducts, aboutUs: e.target.value },
             }))
           }
         />
