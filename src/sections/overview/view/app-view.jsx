@@ -876,6 +876,8 @@ export default function AppView() {
           نبذة عنا و عن منتجاتنا
         </Typography>
         <img src={formData.aboutProducts.image} alt="About Products" style={{ maxWidth: '100%' }} />
+        <br />
+        <br />
         <input
           type="file"
           accept="image/*"
