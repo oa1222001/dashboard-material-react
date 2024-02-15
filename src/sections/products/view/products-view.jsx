@@ -177,15 +177,31 @@ export default function ProductsView() {
       //   'wholesale_offers',
       //   newProduct.wholesale_offers.trim() === '' ? null : newProduct.wholesale_offers
       // );
-      if (newProduct.wholesale_offers.split('\n').filter((line) => line.trim() !== '').length > 0) {
-        // formData.append('wholesale_offers', null);
-        newProduct.wholesale_offers
-          .split('\n')
-          .filter((line) => line.trim() !== '')
-          .forEach((offer) => {
-            formData.append('wholesale_offers', offer);
-          });
+      if (newProduct?.wholesale_offers.length > 0) {
+        console.log(newProduct?.wholesale_offers.length);
+        if (
+          newProduct?.wholesale_offers?.split('\n')?.filter((line) => line.trim() !== '').length > 0
+        ) {
+          // formData.append('wholesale_offers', null);
+          newProduct.wholesale_offers
+            .split('\n')
+            .filter((line) => line.trim() !== '')
+            .forEach((offer) => {
+              formData.append('wholesale_offers', offer);
+            });
+        }
       }
+      // if (
+      //   newProduct?.wholesale_offers?.split('\n')?.filter((line) => line.trim() !== '').length > 0
+      // ) {
+      //   // formData.append('wholesale_offers', null);
+      //   newProduct.wholesale_offers
+      //     .split('\n')
+      //     .filter((line) => line.trim() !== '')
+      //     .forEach((offer) => {
+      //       formData.append('wholesale_offers', offer);
+      //     });
+      // }
       // console.log(formData);
       formData.append('description', newProduct.description);
 

@@ -279,7 +279,8 @@ export default function CategoriesView() {
                     </DialogContent>
                     <DialogActions>
                       <Button onClick={onDelete} color="error">
-                        احذف الفئة
+                        احذف الفئة, يفضل ان تحذف و تضف المنتجات المرتبطة بهذه الفئة مرة اخرى لترتبط
+                        ب فئات جديدة
                       </Button>
                     </DialogActions>
                   </Dialog>
