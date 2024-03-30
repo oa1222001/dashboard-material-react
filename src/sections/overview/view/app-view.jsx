@@ -654,7 +654,7 @@ export default function AppView() {
         {/* Social Media Section */}
         <Grid item xs={12}>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            روابط التواصل الاجتماعي
+            روابط التواصل الاجتماعي, ادخلها كالتالي http://www.example.com
           </Typography>
           {Object.keys(formData.socialMedia).map((platform) => (
             <TextField
